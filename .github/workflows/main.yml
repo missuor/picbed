@@ -16,15 +16,10 @@ jobs:
         echo Add other actions to build,
         echo test, and deploy your project.
 
-    - name: Sync Repo to CODING
+    - name: Sync Repo
       uses: serverlesslife-cn/sync-repo-to-coding@master
       env:
-          # 在 GitHub Settings->Secrets 配置 CODING_PRIVATE_KEY
           SSH_PRIVATE_KEY: ${{ secrets.ID_RSA_FOR_CODE_SYNC_IN_GITHUB }}
       with:
-          # 注意替换为你的 GitHub 源仓库地址
-          # github-repo: "git@github.com:serverlesslife-cn/sync-repo-to-coding.git"
           github-repo: "git@github.com:missuor/picbed.git"
-          # 注意替换为你的 CODING 目标仓库地址
-          # coding-repo: "git@e.coding.net:donghui1/serverlesslife/sync-repo-to-coding.git"
           coding-repo: "git@github.com:missuor/notes.git"
