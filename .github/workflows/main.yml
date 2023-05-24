@@ -1,0 +1,30 @@
+name: Sync Repo
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: test
+      uses: actions/checkout@v3
+    - name: test2
+      run: echo Hello, world!
+
+    - name: Run a multi-line script
+      run: |
+        echo Add other actions to build,
+        echo test, and deploy your project.
+
+    - name: Sync Repo to CODING
+      uses: serverlesslife-cn/sync-repo-to-coding@master
+      env:
+          # 在 GitHub Settings->Secrets 配置 CODING_PRIVATE_KEY
+          SSH_PRIVATE_KEY: ${{ secrets.CODING_PRIVATE_KEY }}
+      with:
+          # 注意替换为你的 GitHub 源仓库地址
+          # github-repo: "git@github.com:serverlesslife-cn/sync-repo-to-coding.git"
+          github-repo: "git@github.com:missuor/picbed.git"
+          # 注意替换为你的 CODING 目标仓库地址
+          # coding-repo: "git@e.coding.net:donghui1/serverlesslife/sync-repo-to-coding.git"
+          coding-repo: "git@github.com:missuor/notes.git"
