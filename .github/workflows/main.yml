@@ -20,7 +20,7 @@ jobs:
       uses: serverlesslife-cn/sync-repo-to-coding@master
       env:
           # 在 GitHub Settings->Secrets 配置 CODING_PRIVATE_KEY
-          SSH_PRIVATE_KEY: ${{ secrets.CODING_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.ID_RSA_FOR_CODE_SYNC_IN_GITHUB }}
       with:
           # 注意替换为你的 GitHub 源仓库地址
           # github-repo: "git@github.com:serverlesslife-cn/sync-repo-to-coding.git"
