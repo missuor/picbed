@@ -63,12 +63,10 @@ jobs:
         env:
             SSH_PRIVATE_KEY: ${{ secrets.ID_RSA_FOR_CODE_SYNC_IN_GITHUB }}
         run: |
-          mkdir -p /root/.ssh
-          echo "$SSH_PRIVATE_KEY" > /root/.ssh/id_rsa
-          chmod 600 /root/.ssh/id_rsa
 
           mkdir -p ~/.ssh
-          cp /root/.ssh/* ~/.ssh/ 2> /dev/null || true
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           GIT_SSH_COMMAND="ssh -v"
           cd $GITHUB_WORKSPACE
           git remote set-url --push origin "git@github.com:missuor/notes.git"
