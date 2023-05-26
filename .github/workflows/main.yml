@@ -73,6 +73,6 @@ jobs:
           # git clone git@github.com:missuor/notes.git
           # cd picbed
           git remote set-url origin "git@github.com:missuor/notes.git"
-          git pull
+          #git pull
           git push --force
 
