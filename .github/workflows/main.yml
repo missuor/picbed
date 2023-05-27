@@ -1,4 +1,4 @@
-name: Sync static branch to repository A
+name: Sync Static Branch
 
 on:
   push:
@@ -10,20 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository B
+      - name: Checkout picbed repository
         uses: actions/checkout@v2
 
-      - name: Push to repository A
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.ID_RSA_FOR_CODE_SYNC_IN_GITHUB }}
+      - name: Configure SSH
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.ID_RSA_FOR_CODE_SYNC_IN_GITHUB }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git clone --branch static --single-branch git@github.com:missuor/picbed.git b
-          cd b
-          git remote add a git@github.com:missuor/notes.git
-          git pull a master --ff-only
-          git push a static:master
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Clone notes repository
+        run: git clone --branch static git@github.com:missuor/notes.git
+
+      - name: Sync static branch
+        run: |
+          cd notes
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git checkout -b static || git checkout static
+          git add .
+          git commit -m "Sync static branch from picbed"
+          git push origin static
