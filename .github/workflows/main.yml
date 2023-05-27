@@ -13,26 +13,14 @@ jobs:
       PRIVATE_KEY: ${{ secrets.ID_RSA_FOR_CODE_SYNC_IN_GITHUB }}
 
     steps:
-      - name: Set up SSH key
+
+      - name: Sync static branch
         run: |
           mkdir -p ~/.ssh/
           echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          # ssh-keyscan github.com >> ~/.ssh/known_hosts
-          
-      # - name: Checkout code
-      #   uses: actions/checkout@v2
-      #   with:
-      #     repository: missuor/notes.git
-      #     ref: static
-      #     # path: notes
-
-
-      - name: Sync static branch
-        run: |
-          # cd notes
-          # cd $GITHUB_WORKSPACE
           GIT_SSH_COMMAND="ssh -v"
+
           git clone git@github.com:missuor/notes.git
           cd notes
           git remote add picbed git@github.com:missuor/picbed.git
