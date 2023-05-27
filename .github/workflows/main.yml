@@ -1,4 +1,4 @@
-name: Sync to notes
+name: Sync static branch
 
 on:
   push:
@@ -10,25 +10,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Check out picbed repository
         uses: actions/checkout@v2
+        with:
+          repository: missuor/picbed
+          ref: static
 
-      - name: Sync to notes
+      - name: Check out notes repository
+        uses: actions/checkout@v2
+        with:
+          repository: missuor/notes
+          ref: static
+          path: notes
+
+      - name: Sync static branch
         run: |
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-          git remote add notes "git@github.com:missuor/notes.git"
-          git fetch notes
-
-          # Create the static branch in notes if it doesn't exist
-          if ! git branch --list notes/static; then
-            git checkout --orphan notes/static
-            git commit --allow-empty -m "Create static branch"
-            git push notes notes/static
-          fi
-
-          # Sync static branch from picbed to notes
-          git checkout notes/static
-          git merge --ff-only "$GITHUB_REF"
-          git push notes notes/static
+          cd notes
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git remote add picbed ../
+          git fetch picbed static
+          git checkout static
+          git merge picbed/static --no-edit
+          git push origin static
