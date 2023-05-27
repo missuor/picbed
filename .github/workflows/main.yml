@@ -10,26 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out picbed repository
-        uses: actions/checkout@v2
-        with:
-          repository: missuor/picbed
-          ref: static
+    - name: Check out code
+      uses: actions/checkout@v2
 
-      - name: Check out notes repository
-        uses: actions/checkout@v2
-        with:
-          repository: missuor/notes
-          ref: static
-          path: notes
+    - name: Sync with notes repository
+      run: |
+        git clone git@github.com:missuor/notes.git
+        cd notes
 
-      - name: Sync static branch
-        run: |
-          cd notes
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
-          git remote add picbed ../
-          git fetch picbed static
-          git checkout static
-          git merge picbed/static --no-edit
+        # 创建 static 分支（如果不存在）
+        if ! git show-ref --quiet refs/heads/static; then
+          git checkout --orphan static
+          git rm -rf .
+          touch README.md
+          git add README.md
+          git commit -m "Create static branch"
           git push origin static
+        fi
+
+        # 同步 static 分支
+        rsync -av --delete ../picbed/static/ .
+        
+        # 提交同步的更改
+        git add .
+        git commit -m "Sync static branch"
+        git push origin static
