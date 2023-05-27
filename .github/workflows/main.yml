@@ -74,5 +74,6 @@ jobs:
           # cd picbed
           git remote set-url origin "git@github.com:missuor/notes.git"
           #git pull
-          git push --force
+          # git push --force
+          git push origin static --force
 
