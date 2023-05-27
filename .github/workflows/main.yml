@@ -28,7 +28,7 @@ jobs:
           cd notes
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git checkout -b static || git checkout static
+          #git checkout -b static || git checkout static
           git add .
           git commit -m "Sync static branch from picbed"
           git push origin static
