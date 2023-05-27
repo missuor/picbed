@@ -1,4 +1,4 @@
-name: Sync static branch
+name: Sync picbed static branch
 
 on:
   push:
@@ -9,35 +9,28 @@ jobs:
   sync:
     runs-on: ubuntu-latest
 
+    env:
+      PRIVATE_KEY: ${{ secrets.ID_RSA_FOR_CODE_SYNC_IN_GITHUB }}
+
     steps:
-    - name: Check out code
-      uses: actions/checkout@v2
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          repository: missuor/notes
+          ref: static
+          path: notes
 
-    - name: Sync with notes repository
-      env:
-        ID_RSA: ${{ secrets.ID_RSA_FOR_CODE_SYNC_IN_GITHUB }}
-      run: |
-        mkdir -p ~/.ssh
-        echo "$ID_RSA" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
 
-        git clone git@github.com:missuor/notes.git
-        cd notes
-
-        # 创建 static 分支（如果不存在）
-        if ! git show-ref --quiet refs/heads/static; then
-          git checkout --orphan static
-          git rm -rf .
-          touch README.md
-          git add README.md
-          git commit -m "Create static branch"
-          git push origin static
-        fi
-
-        # 同步 static 分支
-        rsync -av --delete ../picbed/static/ .
-        
-        # 提交同步的更改
-        git add .
-        git commit -m "Sync static branch"
-        git push origin static
+      - name: Sync static branch
+        run: |
+          cd notes
+          git remote add picbed git@github.com:missuor/picbed.git
+          git fetch picbed static
+          git push origin picbed/static:static --force
