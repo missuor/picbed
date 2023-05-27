@@ -23,7 +23,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          repository: missuor/notes
+          repository: missuor/notes.git
           ref: static
           path: notes
 
